@@ -21,4 +21,4 @@ RUN pip install --no-cache-dir --default-timeout=1000 -r requirements.txt
 COPY . /app
 
 # Run the FastAPI application with Uvicorn
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.__init__:app"]
