@@ -13,6 +13,6 @@ RUN npm install
 COPY . .
 
 # Build Next.js application for production
-RUN npm run build -- --clear-cache
+RUN npm run build --clear-cache
 
 CMD ["npm", "run", "start"]
