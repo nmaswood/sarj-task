@@ -1,7 +1,7 @@
 import { Book, SuccessResponse } from '@/lib/types/book';
 import { ApiError } from '@/lib/types/error';
 
-const baseUrl = process.env.BASE_URL?.replace(/\/$/, '/api/v1');
+const baseUrl = process.env.BASE_URL?.replace(/\/$/, '/api/v1') ||  'https://sarj-task.onrender.com/api/v1';
 
 async function handleApiError(response: Response) {
   if (!response.ok) {
@@ -14,7 +14,7 @@ export const bookApi = {
   getBook: async (id: string): Promise<Book> => {
     try {
       console.log("bassss", baseUrl);
-      
+
       const response = await fetch(`${baseUrl}/book/${id}`);
       await handleApiError(response);
       return await response.json();
