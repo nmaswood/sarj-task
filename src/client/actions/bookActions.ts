@@ -13,6 +13,8 @@ async function handleApiError(response: Response) {
 export const bookApi = {
   getBook: async (id: string): Promise<Book> => {
     try {
+      console.log("bassss", baseUrl);
+      
       const response = await fetch(`${baseUrl}/book/${id}`);
       await handleApiError(response);
       return await response.json();
