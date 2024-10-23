@@ -1,4 +1,4 @@
-import { AnalysisResponse, CharacterAnalysis, LanguageAnalysis, SentimentAnalysis, SummaryAnalysis } from '@/lib/types/analysis';
+import { AnalysisResponse, CharacterAnalysis, LanguageAnalysis, SentimentAnalysis, SummaryAnalysis } from '../lib/types/analysis';
 import { ApiError } from '@/lib/types/error';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '');

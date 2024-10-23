@@ -1,4 +1,4 @@
-import { CharacterAnalysis } from "@/lib/types/analysis";
+import { CharacterAnalysis } from "../../../lib/types/analysis";
 
 interface CharacterResultsProps {
   data: CharacterAnalysis;

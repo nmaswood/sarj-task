@@ -1,4 +1,4 @@
-import { SummaryAnalysis } from "@/lib/types/analysis";
+import { SummaryAnalysis } from "../../../lib/types/analysis";
 
 interface SummaryResultsProps {
   data: SummaryAnalysis;

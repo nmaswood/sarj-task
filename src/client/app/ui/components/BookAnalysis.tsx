@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { analysisApi } from '@/actions/analyzeActions';
-import { SentimentAnalysis, CharacterAnalysis, LanguageAnalysis, SummaryAnalysis } from '@/lib/types/analysis';
+import { analysisApi } from '../../../actions/analyzeActions';
+import { SentimentAnalysis, CharacterAnalysis, LanguageAnalysis, SummaryAnalysis } from '../../../lib/types/analysis';
 import { TabButton } from './TabButton';
 import { AnalysisButton } from './AnalysisButton';
 import { AnalysisError } from './AnalysisError';
