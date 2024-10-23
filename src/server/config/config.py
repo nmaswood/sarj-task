@@ -8,6 +8,7 @@ class Config(object):
   HOST = os.getenv('HOST')
   PORT = int(os.getenv('PORT'))
   SECRET_KEY = os.getenv('SECRET_KEY')
+  FRONTEND_ORIGIN=os.getenv('FRONTEND_ORIGIN')
   DB_HOST = os.getenv('DB_HOST')
   DB_NAME = os.getenv('DB_NAME')
   DB_USERNAME = os.getenv('DB_USERNAME')

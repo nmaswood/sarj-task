@@ -41,7 +41,7 @@ app.add_middleware(
 # Add Cors middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[Config.FRONTEND_ORIGIN],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,8 +50,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     # Any startup logic like initializing the database connection can go here
-    print(f"Using database: {Config.SQLALCHEMY_DATABASE_URI}")
-    print(f"Supported languages: {Config.LANGUAGES}")
+    print(f"App started successfully")
 
     alembic_cfg = AlembicConfig("alembic.ini")
     command.upgrade(alembic_cfg, "head")
