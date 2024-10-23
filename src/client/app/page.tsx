@@ -1,101 +1,130 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { bookApi } from '@/actions/bookActions';
+import { useBookStore } from '@/lib/store/useBookStore';
+import { Book } from '@/lib/types/book';
+import { ErrorMessage } from '@/components/ErrorMessage';
+import { AnalysisSection } from '@/app/ui/components/BookAnalysis';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [bookId, setBookId] = useState<string>('');
+  const queryClient = useQueryClient();
+  const { setSelectedBook } = useBookStore();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const { data: savedBooks, isLoading: isLoadingSaved, error: savedBooksError } = useQuery({
+    queryKey: ['saved-books'],
+    queryFn: bookApi.getSavedBooks,
+  });
+
+  const { data: searchedBook, isLoading: isSearching, error: searchError, refetch } = useQuery({
+    queryKey: ['book', bookId],
+    queryFn: () => bookApi.getBook(bookId),
+    enabled: false,
+    retry: false
+  });
+
+  const { mutate: saveBook, status, error: saveError } = useMutation({
+    mutationFn: bookApi.saveBook,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['saved-books'] });
+    },
+  });
+
+  const handleSearch = () => {
+    if (bookId) {
+      refetch();
+    }
+  };
+
+  const handleSave = (book: Book) => {
+    saveBook(book);
+    setSelectedBook(null);
+  };
+
+  return (
+    <main className="h-screen flex flex-col">
+      {/* Search Section - 1/3 height */}
+      <section className="h-1/3 min-h-[250px] p-3 border-b">
+        <div className="container mx-auto">
+          <h1 className="text-lg font-base mb-1">Book Library</h1>
+          <div className="flex flex-row justify-center space-x-2 mb-1">
+            <input
+              type="text"
+              value={bookId}
+              onChange={(e) => setBookId(e.target.value)}
+              placeholder="Enter Book ID"
+              className="px-2 py-1 outline-none border rounded text-black text-sm w-64"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <button
+              onClick={handleSearch}
+              disabled={isSearching}
+              className="px-2 py-1 text-sm bg-blue-500 text-white rounded disabled:bg-gray-400"
+            >
+              {isSearching ? 'Searching...' : 'Search'}
+            </button>
+          </div>
+
+          {searchError && <ErrorMessage message={searchError.message} />}
+
+          {searchedBook && (
+            <div className="flex justify-center items-start space-x-4 mt-5">
+              <div className="h-32 w-24 flex-shrink-0">
+                <img src={searchedBook.image} alt="" className="h-full w-full object-cover" />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <h6 className="font-semibold">{searchedBook?.title}</h6>
+                <p className="text-sm text-gray-600">Description: {searchedBook?.description}</p>
+                <p className="text-sm text-gray-600">Type: {searchedBook?.type}</p>
+                <p className="text-sm text-gray-600">ID: {searchedBook?.id}</p>
+                <button
+                  onClick={() => handleSave(searchedBook)}
+                  disabled={status === "pending"}
+                  className="px-2 py-1 w-24 bg-green-500 text-white text-sm rounded disabled:bg-gray-400"
+                >
+                  {status === "pending" ? 'Saving...' : 'Save Book'}
+                </button>
+              </div>
+            </div>
+          )}
+          {saveError && <ErrorMessage message={saveError.message} />}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      {/* Analysis Section - 1/3 height */}
+      <section className="h-1/3 min-h-[250px] border-b overflow-y-auto">
+        <div className="container mx-auto p-4">
+          <AnalysisSection bookId={String(searchedBook?.id)} />
+        </div>
+      </section>
+
+      {/* Saved Books Section - 1/3 height */}
+      <section className="h-1/3 min-h-[250px] overflow-y-auto">
+        <div className="container mx-auto p-4">
+          {isLoadingSaved ? (
+            <p className="text-sm">Loading saved books...</p>
+          ) : savedBooksError ? (
+            <ErrorMessage message={savedBooksError.message} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {savedBooks?.map((book) => (
+                <div key={book.id} className="p-4 border rounded shadow-sm">
+                  <div className="h-32 w-24 flex-shrink-0">
+                    <img src={book.image} alt="" className="h-full w-full object-cover" />
+                  </div>
+                  <div className="flex flex-col space-y-1">
+                    <h6 className="font-semibold">{book?.title}</h6>
+                    <p className="text-sm text-gray-600">Description: {book?.description}</p>
+                    <p className="text-sm text-gray-600">Type: {book?.type}</p>
+                    <p className="text-sm text-gray-600">ID: {book?.id}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }

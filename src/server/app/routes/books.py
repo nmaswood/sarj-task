@@ -1,17 +1,18 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.controllers import BookController
-from app.schemas import BookSchema
+from app.schemas import BookSchema, SuccessResponse
+from typing import Union
 
 router = APIRouter()
 
-@router.get("/{book_id}")
-async def get_book(book_id: int):
-  return BookController.get_book(book_id)
+@router.get("/book/{book_id}", response_model=BookSchema)
+async def get_book(book_id: str):
+    return await BookController.get_book(book_id)
 
-@router.post("/")
+@router.post("/book", response_model=SuccessResponse)
 async def save_book(book: BookSchema):
-  return BookController.create_book(book)
+    return await BookController.save_book(book)
 
-@router.get("/")
-async def get_books():
-  return BookController.get_books()
+@router.get("/books", response_model=list[BookSchema])
+async def get_saved_books():
+    return await BookController.get_saved_books()

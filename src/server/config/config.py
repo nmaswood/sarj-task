@@ -1,22 +1,19 @@
 import os
+from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-
+load_dotenv(os.path.join(basedir, '..', '.env'))
 
 class Config(object):
-  HOST = os.environ.get("HOST", "127.0.0.1")
-  PORT = int(os.environ.get("PORT", 8000))
-  SECRET_KEY = os.environ.get('SECRET_KEY', 'qwerty')
-  DB_HOST = os.environ.get('DB_HOST')
-  DB_NAME = os.environ.get('DB_NAME')
-  DB_USERNAME = os.environ.get('DB_USERNAME')
-  DB_PASSWORD = os.environ.get('DB_PASSWORD')
-
-  # Windows Authentication
-  SQLALCHEMY_DATABASE_URI = f"mssql+pyodbc://{DB_HOST}/{DB_NAME}?driver=ODBC+Driver+17+for+SQL+Server&encrypt=true&trust_server_certificate=yes"
-
-  # Uncomment the below if using SQL Server Authentication instead of Windows Authentication
-  # SQLALCHEMY_DATABASE_URI = f"mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}?driver=ODBC+Driver+17+for+SQL+Server&encrypt=true&trust_server_certificate=yes"
-  
+  HOST = os.getenv('HOST')
+  PORT = int(os.getenv('PORT'))
+  SECRET_KEY = os.getenv('SECRET_KEY')
+  DB_HOST = os.getenv('DB_HOST')
+  DB_NAME = os.getenv('DB_NAME')
+  DB_USERNAME = os.getenv('DB_USERNAME')
+  DB_PASSWORD = os.getenv('DB_PASSWORD')
+  SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
   SQLALCHEMY_TRACK_MODIFICATIONS = False
+  GUTENBERG_CONTENT_URL=os.getenv('GUTENBERG_CONTENT_URL')
+  GUTENBERG_METADATA_URL=os.getenv('GUTENBERG_METADATA_URL')
   LANGUAGES = ['en-US', 'en-GB', 'en-CA', 'es']

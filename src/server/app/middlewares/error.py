@@ -1,4 +1,3 @@
-# app/middleware/error_middleware.py
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
 

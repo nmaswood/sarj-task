@@ -1,14 +1,98 @@
+# config/db.py
+from contextlib import contextmanager
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
+from typing import Generator
+from sqlalchemy.exc import SQLAlchemyError
 from config.config import Config
 
-# Create engine using the database URI from the config
-engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(
+    Config.SQLALCHEMY_DATABASE_URI,
+    pool_pre_ping=True,
+    pool_recycle=3600
+)
 
-def get_db():
-	db = SessionLocal()
-	try:
-		yield db
-	finally:
-		db.close()
+session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = scoped_session(session_factory)
+Base = declarative_base()
+Base.query = SessionLocal.query_property()
+
+class DatabaseManager:
+    @staticmethod
+    @contextmanager
+    def get_db() -> Generator:
+        db = SessionLocal()
+        try:
+            yield db
+            db.commit()
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise e
+        finally:
+            db.close()
+
+    @staticmethod
+    def create_all():
+        Base.metadata.create_all(bind=engine)
+
+    @staticmethod
+    def drop_all():
+        Base.metadata.drop_all(bind=engine)
+
+class DBStorage:
+    @staticmethod
+    def _get_db():
+        return SessionLocal()
+
+    @staticmethod
+    def all(cls=None):
+        db = DBStorage._get_db()
+        try:
+            if cls is None:
+                result = db.query(Base).all()
+            else:
+                result = db.query(cls).all()
+            # Expunge all objects from session but keep them initialized
+            for obj in result:
+                db.expunge(obj)
+                db.enable_relationship_loading(obj)
+            return result
+        finally:
+            db.close()
+
+    @staticmethod
+    def get(cls, id):
+        db = DBStorage._get_db()
+        try:
+            obj = db.query(cls).filter(cls.id == id).first()
+            if obj:
+                db.expunge(obj)
+                db.enable_relationship_loading(obj)
+            return obj
+        finally:
+            db.close()
+
+    @staticmethod
+    def new(obj):
+        with DatabaseManager.get_db() as db:
+            db.add(obj)
+            db.flush()
+            # Make a copy of all the values before closing the session
+            for attr in obj.__dict__:
+                if not attr.startswith('_'):
+                    getattr(obj, attr)
+            db.expunge(obj)
+            db.enable_relationship_loading(obj)
+            return obj
+
+    @staticmethod
+    def delete(obj=None):
+        if obj is not None:
+            with DatabaseManager.get_db() as db:
+                db.delete(obj)
+
+    @staticmethod
+    def close():
+        SessionLocal.remove()
+        

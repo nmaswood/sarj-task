@@ -1,10 +1,22 @@
 from app.services import BookService
+from app.schemas import BookSchema, SuccessResponse
 
-async def get_book(book_id: int):
-    return await BookService.get_book(book_id)
+async def get_book(book_id: str):
+    try:
+        return await BookService.get_book(book_id)
+    except Exception as e:
+        raise
+        
+
+async def save_book(book: BookSchema):
+    try:
+        await BookService.save_book(book)
+        return SuccessResponse(message="Book saved successfully")
+    except Exception as e:
+        raise
 
 async def get_saved_books():
-    return await BookService.get_saved_books()
-
-async def search_books(query: str):
-    return await BookService.search_books(query)
+    try:
+        return await BookService.get_saved_books()
+    except Exception as e:
+        raise

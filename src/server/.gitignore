@@ -31,8 +31,6 @@ Thumbs.db
 *.sock
 
 # Miscellaneous
-requirements.txt
-requirements.dev.txt
 *.tmp
 *.bak
 *.swp
