@@ -1,7 +1,21 @@
 import { AnalysisResponse, CharacterAnalysis, LanguageAnalysis, SentimentAnalysis, SummaryAnalysis } from '../lib/types/analysis';
 import { ApiError } from '@/lib/types/error';
 
-const baseUrl = process.env.BASE_URL?.replace(/\/$/, '/api/v1');
+const getBaseUrl = () => {
+  // Log the environment variable to debug
+  console.log('Environment variable NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL);
+  
+  const envUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!envUrl) {
+    console.warn('NEXT_PUBLIC_BASE_URL is not defined');
+    return '';  // Return empty string to make the error more obvious
+  }
+  
+  // Remove trailing slash if present and add /api/v1
+  return `${envUrl.replace(/\/$/, '')}/api/v1`;
+};
+
+const baseUrl = getBaseUrl();
 
 async function handleApiError(response: Response) {
   if (!response.ok) {
