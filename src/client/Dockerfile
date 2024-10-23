@@ -7,12 +7,12 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm 
 
 # Copy the rest of the application
 COPY . .
 
 # Build Next.js application for production
-RUN npm run build
+RUN npm run build -- --clear-cache
 
 CMD ["npm", "run", "start"]
