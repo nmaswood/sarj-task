@@ -6,7 +6,7 @@ import { bookApi } from '@/actions/bookActions';
 import { useBookStore } from '@/lib/store/useBookStore';
 import { Book } from '@/lib/types/book';
 import { ErrorMessage } from '@/components/ErrorMessage';
-import { AnalysisSection } from '@/app/ui/components/BookAnalysis';
+import { AnalysisSection } from './ui/components/BookAnalysis';
 
 export default function Home() {
   const [bookId, setBookId] = useState<string>('');
