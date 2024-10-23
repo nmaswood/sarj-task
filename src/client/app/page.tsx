@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { bookApi } from '../actions/bookActions';
-import { useBookStore } from '../lib/store/useBookStore';
-import { Book } from '../lib/types/book';
-import { ErrorMessage } from '../components/ErrorMessage';
+import { bookApi } from '@/actions/bookActions';
+import { useBookStore } from '@/lib/store/useBookStore';
+import { Book } from '@/lib/types/book';
+import { ErrorMessage } from '@/components/ErrorMessage';
 import { AnalysisSection } from './ui/components/BookAnalysis';
 
 export default function Home() {

@@ -1,4 +1,4 @@
-import { SentimentAnalysis } from "../../../lib/types/analysis";
+import { SentimentAnalysis } from "@/lib/types/analysis";
 
 interface SentimentResultsProps {
   data: SentimentAnalysis;

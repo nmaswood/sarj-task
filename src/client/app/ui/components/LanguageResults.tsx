@@ -1,4 +1,4 @@
-import { LanguageAnalysis } from "../../../lib/types/analysis";
+import { LanguageAnalysis } from "@/lib/types/analysis";
 
 interface LanguageResultsProps {
   data: LanguageAnalysis;
