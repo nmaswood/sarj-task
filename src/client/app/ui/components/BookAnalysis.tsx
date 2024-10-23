@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { analysisApi } from '@/actions/analyzeActions';
+import { SentimentAnalysis, CharacterAnalysis, LanguageAnalysis, SummaryAnalysis } from '@/lib/types/analysis';
 import { TabButton } from './TabButton';
 import { AnalysisButton } from './AnalysisButton';
 import { AnalysisError } from './AnalysisError';
@@ -79,17 +80,22 @@ export function AnalysisSection({ bookId }: AnalysisSectionProps) {
 
         {getMutationForType(activeTab).isSuccess && (
           <div className="p-4 bg-gray-50 text-black rounded-lg">
+            {/* {activeTab === 'sentiment' && 'sentiment' in getMutationForType(activeTab).data?.data && (
+              <SentimentResults 
+                data={getMutationForType(activeTab).data?.data as SentimentAnalysis} 
+              />
+            )} */}
             {activeTab === 'sentiment' && (
-              <SentimentResults data={getMutationForType(activeTab).data?.data} />
+              <SentimentResults data={getMutationForType(activeTab).data?.data as SentimentAnalysis} />
             )}
             {activeTab === 'language' && (
-              <LanguageResults data={getMutationForType(activeTab).data?.data} />
+              <LanguageResults data={getMutationForType(activeTab).data?.data as LanguageAnalysis} />
             )}
             {activeTab === 'characters' && (
-              <CharacterResults data={getMutationForType(activeTab).data?.data} />
+              <CharacterResults data={getMutationForType(activeTab).data?.data as CharacterAnalysis} />
             )}
             {activeTab === 'summary' && (
-              <SummaryResults data={getMutationForType(activeTab).data?.data} />
+              <SummaryResults data={getMutationForType(activeTab).data?.data as SummaryAnalysis} />
             )}
           </div>
         )}

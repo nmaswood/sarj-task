@@ -1,6 +1,6 @@
-export interface AnalysisResponse {
+export interface AnalysisResponse <T> {
   success: boolean;
-  data?: { [key: string]: string };
+  data: T;
 }
 
 export interface CharacterAnalysis {
