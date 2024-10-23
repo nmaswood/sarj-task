@@ -1,7 +1,7 @@
 import { Book, SuccessResponse } from '@/lib/types/book';
 import { ApiError } from '@/lib/types/error';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, '/api/v1');
+const baseUrl = process.env.BASE_URL?.replace(/\/$/, '/api/v1');
 
 async function handleApiError(response: Response) {
   if (!response.ok) {
