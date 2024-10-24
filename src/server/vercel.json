@@ -2,18 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "app/__init__.py",
-      "use": "@vercel/python"
+      "src": "server/Dockerfile",
+      "use": "@vercel/docker"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "app/__init__.py"
+      "dest": "/"
     }
-  ],
-  "env": {
-    "PYTHONPATH": ".",
-    "PORT": "8000"
-  }
+  ]
 }
