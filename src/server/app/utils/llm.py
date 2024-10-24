@@ -9,10 +9,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 # Constants for text processing
-MAX_LENGTH = 512
-CHUNK_OVERLAP = 50
+MAX_LENGTH = 256
+CHUNK_OVERLAP = 20
 
-def initialize_model(model_name: str = "gpt2"):
+def initialize_model(model_name: str = "distilgpt2"):
     """Initialize the tokenizer and model."""
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
@@ -73,14 +73,16 @@ async def analyze_with_llm(content: str, prompt: str) -> str:
             with torch.no_grad():
                 output = model.generate(
                     input_ids=input_ids,
-                    max_new_tokens=150,
+                    max_new_tokens=100,
                     temperature=0.7,
                     top_p=0.9,
                     pad_token_id=tokenizer.pad_token_id
                 )
                 generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
                 responses.append({'text': generated_text, 'position': chunk['position']})
-
+            # Cleanup
+            del input_ids, output
+            
         # Combine all responses
         combined_analysis = " ".join([resp['text'] for resp in sorted(responses, key=lambda x: x['position'])])
 
