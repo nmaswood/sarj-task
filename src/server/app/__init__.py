@@ -41,7 +41,7 @@ app.add_middleware(
 # Add Cors middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[Config.FRONTEND_ORIGIN],
+    allow_origins=['https://sarj-task-client.onrender.com/'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
