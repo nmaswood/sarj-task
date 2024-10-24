@@ -33,18 +33,25 @@ logger.info('App startup')
 limiter = FixedWindowRateLimiter(storage=MemoryStorage())
 
 
+# Add Cors middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['https://sarj-task-client.onrender.com'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=[
+        "Content-Type",
+        "Authorization",
+        "Accept",
+        "Accept-Language",
+        "Accept-Encoding",
+    ],
+)
+
 # Add Rate Limit Middleware
 app.add_middleware(
     RateLimitingMiddleware,
     strategy=limiter,
-)
-# Add Cors middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['https://sarj-task-client.onrender.com/'],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 @app.on_event("startup")
